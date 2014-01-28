@@ -1300,7 +1300,7 @@ static int semctl_setval(struct ipc_namespace *ns, int semid, int semnum,
 
 	sem_lock(sma, NULL, -1);
 
-	if (sma->sem_perm.deleted) {
+	if (!ipc_valid_object(&sma->sem_perm)) {
 		sem_unlock(sma, -1);
 		rcu_read_unlock();
 		return -EIDRM;
@@ -1360,7 +1360,7 @@ static int semctl_main(struct ipc_namespace *ns, int semid, int semnum,
 		int i;
 
 		sem_lock(sma, NULL, -1);
-		if (sma->sem_perm.deleted) {
+		if (!ipc_valid_object(&sma->sem_perm)) {
 			err = -EIDRM;
 			goto out_unlock;
 		}
@@ -1379,7 +1379,7 @@ static int semctl_main(struct ipc_namespace *ns, int semid, int semnum,
 
 			rcu_read_lock();
 			sem_lock_and_putref(sma);
-			if (sma->sem_perm.deleted) {
+			if (!ipc_valid_object(&sma->sem_perm)) {
 				err = -EIDRM;
 				goto out_unlock;
 			}
@@ -1427,7 +1427,7 @@ static int semctl_main(struct ipc_namespace *ns, int semid, int semnum,
 		}
 		rcu_read_lock();
 		sem_lock_and_putref(sma);
-		if (sma->sem_perm.deleted) {
+		if (!ipc_valid_object(&sma->sem_perm)) {
 			err = -EIDRM;
 			goto out_unlock;
 		}
@@ -1453,7 +1453,7 @@ static int semctl_main(struct ipc_namespace *ns, int semid, int semnum,
 		goto out_rcu_wakeup;
 
 	sem_lock(sma, NULL, -1);
-	if (sma->sem_perm.deleted) {
+	if (!ipc_valid_object(&sma->sem_perm)) {
 		err = -EIDRM;
 		goto out_unlock;
 	}
@@ -1717,7 +1717,7 @@ static struct sem_undo *find_alloc_undo(struct ipc_namespace *ns, int semid)
 	/* step 3: Acquire the lock on semaphore array */
 	rcu_read_lock();
 	sem_lock_and_putref(sma);
-	if (sma->sem_perm.deleted) {
+	if (!ipc_valid_object(&sma->sem_perm)) {
 		sem_unlock(sma, -1);
 		rcu_read_unlock();
 		kfree(new);
@@ -1864,7 +1864,15 @@ SYSCALL_DEFINE4(semtimedop, int, semid, struct sembuf __user *, tsops,
 
 	error = -EIDRM;
 	locknum = sem_lock(sma, sops, nsops);
-	if (sma->sem_perm.deleted)
+	/*
+	 * We eventually might perform the following check in a lockless
+	 * fashion, considering ipc_valid_object() locking constraints.
+	 * If nsops == 1 and there is no contention for sem_perm.lock, then
+	 * only a per-semaphore lock is held and it's OK to proceed with the
+	 * check below. More details on the fine grained locking scheme
+	 * entangled here and why it's RMID race safe on comments at sem_lock()
+	 */
+	if (!ipc_valid_object(&sma->sem_perm))
 		goto out_unlock_free;
 	/*
 	 * semid identifiers are not unique - find_alloc_undo may have
@@ -2097,7 +2105,7 @@ void exit_sem(struct task_struct *tsk)
 
 		sem_lock(sma, NULL, -1);
 		/* exit_sem raced with IPC_RMID, nothing to do */
-		if (sma->sem_perm.deleted) {
+		if (!ipc_valid_object(&sma->sem_perm)) {
 			sem_unlock(sma, -1);
 			rcu_read_unlock();
 			continue;
