@@ -1421,11 +1421,7 @@ static int __get_any_page(struct page *p, unsigned long pfn, int flags)
 	if (flags & MF_COUNT_INCREASED)
 		return 1;
 
-	/*
-	 * The lock_memory_hotplug prevents a race with memory hotplug.
-	 * This is a big hammer, a better would be nicer.
-	 */
-	lock_memory_hotplug();
+	get_online_mems();
 
 	/*
 	 * Isolate the page, so that it doesn't get reallocated if it
@@ -1453,7 +1449,7 @@ static int __get_any_page(struct page *p, unsigned long pfn, int flags)
 		/* Not a free page */
 		ret = 1;
 	}
-	unlock_memory_hotplug();
+	put_online_mems();
 	return ret;
 }
 
