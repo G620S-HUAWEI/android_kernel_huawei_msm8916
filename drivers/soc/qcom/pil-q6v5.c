@@ -68,6 +68,7 @@
 #define QDSP6v55_LDO_BYP                BIT(25)
 #define QDSP6v55_BHS_ON                 BIT(24)
 #define QDSP6v55_CLAMP_WL               BIT(21)
+#define QDSP6v55_CLAMP_QMC_MEM          BIT(22)
 #define L1IU_SLP_NRET_N                 BIT(15)
 #define L1DU_SLP_NRET_N                 BIT(14)
 #define L2PLRU_SLP_NRET_N               BIT(13)
