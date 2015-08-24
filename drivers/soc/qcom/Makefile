@@ -69,6 +69,7 @@ obj-$(CONFIG_MSM_CPU_PWR_CTL) += cpu_pwr_ctl.o
 obj-$(CONFIG_MSM8994_V1_PMUIRQ_WA) += cti-pmu-irq.o
 obj-$(CONFIG_MSM_XPU_ERR_FATAL) += scm-xpu.o
 obj-$(CONFIG_MSM_LIMITER) += msm_limiter.o
+obj-$(CONFIG_STATE_NOTIFIER) += state_notifier.o
 obj-$(CONFIG_MSM_HOTPLUG) += msm_hotplug.o
 ifdef CONFIG_MSM_RTB
 	obj-y += msm_rtb-hotplug.o
