@@ -1,4 +1,4 @@
-/* Copyright (c) 2011-2015, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2011-2016, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -50,7 +50,7 @@ static int enable_debug;
 module_param(enable_debug, int, S_IRUGO | S_IWUSR);
 
 /* The maximum shutdown timeout is the product of MAX_LOOPS and DELAY_MS. */
-#define SHUTDOWN_ACK_MAX_LOOPS	50
+#define SHUTDOWN_ACK_MAX_LOOPS	100
 #define SHUTDOWN_ACK_DELAY_MS	100
 
 /**
