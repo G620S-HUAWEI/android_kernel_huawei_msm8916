@@ -812,19 +812,19 @@ static int __init logger_init(void)
 {
 	int ret;
 
-	ret = create_log(LOGGER_LOG_MAIN, CONFIG_LOGCAT_SIZE*1024);
+	ret = create_log(LOGGER_LOG_MAIN, CONFIG_LOGCAT_SIZE*512);
 	if (unlikely(ret))
 		goto out;
 
-	ret = create_log(LOGGER_LOG_EVENTS, CONFIG_LOGCAT_SIZE*1024);
+	ret = create_log(LOGGER_LOG_EVENTS, CONFIG_LOGCAT_SIZE*512);
 	if (unlikely(ret))
 		goto out;
 
-	ret = create_log(LOGGER_LOG_RADIO, CONFIG_LOGCAT_SIZE*1024);
+	ret = create_log(LOGGER_LOG_RADIO, CONFIG_LOGCAT_SIZE*512);
 	if (unlikely(ret))
 		goto out;
 
-	ret = create_log(LOGGER_LOG_SYSTEM, CONFIG_LOGCAT_SIZE*1024);
+	ret = create_log(LOGGER_LOG_SYSTEM, CONFIG_LOGCAT_SIZE*512);
 	if (unlikely(ret))
 		goto out;
 
