@@ -1,0 +1,48 @@
+/* Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ */
+/dts-v1/;
+#include "msm8916-qrd-skuh.dtsi"
+#include "msm8916-memory.dtsi"
+#include "y550/msm8916-qrd-y550_l01.dtsi"
+/ {
+	model = "Qualcomm MSM 8916 QRD Y550_L01";
+	compatible = "qcom,msm8916-qrd-skuh", "qcom,msm8916-qrd", "qcom,msm8916", "qcom,qrd";
+	qcom,board-id = <8000 0>, <8000 4>,
+			<8001 0>, <8001 4>,
+			<8096 0>, <8096 4>,
+			<8016 0>, <8016 4>,
+			<8017 0>, <8017 4>,
+			<8112 0>, <8112 4>,
+			<8032 0>, <8032 4>,
+			<8033 0>, <8033 4>;
+};
+
+&mdss_dsi0 {
+	qcom,dsi-pref-prim-pan = <&dsi_boe_nt35512_4p5_fwvga_video>;
+};
+
+&soc {
+
+	sound {
+		qcom,msm-hs-micbias-type = "external";
+		qcom,audio-routing =
+				"RX_BIAS", "MCLK",
+				"SPK_RX_BIAS", "MCLK",
+				"INT_LDO_H", "MCLK",
+				"MIC BIAS External", "Handset Mic",
+				"MIC BIAS External2", "Headset Mic",
+				"MIC BIAS External", "Secondary Mic",
+				"AMIC1", "MIC BIAS External",
+				"AMIC2", "MIC BIAS External2",
+				"AMIC3", "MIC BIAS External";
+	};
+};
