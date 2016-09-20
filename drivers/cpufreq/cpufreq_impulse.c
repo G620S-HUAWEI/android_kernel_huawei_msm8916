@@ -26,6 +26,7 @@
 #ifdef CONFIG_STATE_NOTIFIER
 #include <linux/state_notifier.h>
 #endif
+#include <linux/msm_kgsl.h>
 
 struct cpufreq_impulse_policyinfo {
 	struct timer_list policy_timer;
@@ -46,6 +47,7 @@ struct cpufreq_impulse_policyinfo {
 	int governor_enabled;
 	struct cpufreq_impulse_tunables *cached_tunables;
 	unsigned long *cpu_busy_times;
+	unsigned int gfx_count;
 };
 
 /* Protected by per-policy load_lock */
@@ -466,8 +468,15 @@ static void cpufreq_impulse_timer(unsigned long data)
 	}
 
 	spin_lock_irqsave(&ppol->target_freq_lock, flags);
+
+	if (ppol->gfx_count < 500 && gfx_level < 3)
+		++ppol->gfx_count;
+	else if (ppol->gfx_count > 1)
+		--ppol->gfx_count;
+
 	cpu_load = loadadjfreq / ppol->policy->cur;
 	tunables->boosted = cpu_load >= tunables->go_hispeed_load;
+	tunables->boosted = tunables->boosted || (ppol->gfx_count > 300);
 #ifdef CONFIG_STATE_NOTIFIER
 	tunables->boosted = tunables->boosted && !state_suspended;
 #endif
@@ -1281,6 +1290,7 @@ static int cpufreq_governor_impulse(struct cpufreq_policy *policy,
 		ppol->hispeed_validate_time = ppol->floor_validate_time;
 		ppol->min_freq = policy->min;
 		ppol->reject_notification = true;
+		ppol->gfx_count = 0;
 		down_write(&ppol->enable_sem);
 		del_timer_sync(&ppol->policy_timer);
 		del_timer_sync(&ppol->policy_slack_timer);
