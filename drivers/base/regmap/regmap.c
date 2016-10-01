@@ -1545,11 +1545,10 @@ int regmap_bulk_write(struct regmap *map, unsigned int reg, const void *val,
 	 */
 	if (map->use_single_rw) {
 		for (i = 0; i < val_count; i++) {
-			ret = _regmap_raw_write(map,
-						reg + (i * map->reg_stride),
-						val + (i * val_bytes),
-						val_bytes,
-						false);
+			ret = regmap_raw_write(map,
+					       reg + (i * map->reg_stride),
+					       val + (i * val_bytes),
+					       val_bytes);
 			if (ret != 0)
 				return ret;
 		}
