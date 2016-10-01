@@ -960,6 +960,7 @@ void __init iotable_init(struct map_desc *io_desc, int nr)
 		vm->flags |= VM_ARM_MTYPE(md->type);
 		vm->caller = iotable_init;
 		add_static_vm_early(svm++);
+		mark_vmalloc_reserved_area(vm->addr, vm->size);
 	}
 }
 
