@@ -15,6 +15,7 @@
 #include "msm8916-qrd.dtsi"
 #include "msm8916-memory.dtsi"
 #include "c8817d/msm8916-qrd-c8817d.dtsi"
+#include "carrier-channel-ids.dtsi"
 
 / {
 	model = "Qualcomm MSM 8916 QRD G620S-L02";
