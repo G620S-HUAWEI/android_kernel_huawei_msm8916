@@ -2803,7 +2803,7 @@ bool kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t size,
 		}
 
 		/* kmem_cache debug support */
-		s = slab_pre_alloc_hook(s, flags);
+		slab_pre_alloc_hook(s, flags);
 		if (unlikely(!s))
 			goto error;
 
