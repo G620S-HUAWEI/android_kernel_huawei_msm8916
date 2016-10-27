@@ -560,6 +560,39 @@ struct memory_block *find_memory_block(struct mem_section *section)
 	return find_memory_block_hinted(section, NULL);
 }
 
+static struct attribute *memory_memblk_attrs[] = {
+	&dev_attr_phys_index.attr,
+	&dev_attr_end_phys_index.attr,
+	&dev_attr_state.attr,
+	&dev_attr_phys_device.attr,
+	&dev_attr_removable.attr,
+	NULL
+};
+
+static struct attribute_group memory_memblk_attr_group = {
+	.attrs = memory_memblk_attrs,
+};
+
+static const struct attribute_group *memory_memblk_attr_groups[] = {
+	&memory_memblk_attr_group,
+	NULL,
+};
+
+/*
+ * register_memory - Setup a sysfs device for a memory block
+ */
+static
+int register_memory(struct memory_block *memory)
+{
+	memory->dev.bus = &memory_subsys;
+	memory->dev.id = memory->start_section_nr / sections_per_block;
+	memory->dev.release = memory_block_release;
+	memory->dev.groups = memory_memblk_attr_groups;
+	memory->dev.offline = memory->state == MEM_OFFLINE;
+
+	return device_register(&memory->dev);
+}
+
 static int init_memory_block(struct memory_block **memory,
 			     struct mem_section *section, unsigned long state)
 {
